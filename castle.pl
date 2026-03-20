@@ -8,14 +8,18 @@ printList([H|T]) :-
 
 % Succeeds when there's path from enter to exit in Castle thats visited rooms include every room in rooms
 solveRooms(Castle, Rooms) :-
-    pathToExit(Castle, enter, Path, _Cost),
-    containsAll(Rooms, Path),
+    once((
+        pathToExit(Castle, enter, Path, _Cost),
+        containsAll(Rooms, Path)
+    )),
     printList(Path).
 
 % Succeeds when there is a path from enter to exit in Castle and total cost is within Limit
 solveRoomsWithinCost(Castle, Limit) :-
-    pathToExit(Castle, enter, Path, Cost),
-    Cost =< Limit,
+    once((
+        pathToExit(Castle, enter, Path, Cost),
+        Cost =< Limit
+    )),
     format('Cost is ~w within limit of ~w~n', [Cost, Limit]),
     printList(Path).
 
@@ -33,5 +37,7 @@ pathToExit(Castle, FromRoom, [ToRoom|RestPath], Cost) :-
 % True when every room in RequiredRooms is somewhere in Path
 containsAll([], _).
 containsAll([H|T], Path) :-
-    member(H, Path),
+    memberchk(H, Path),
     containsAll(T, Path).
+
+
